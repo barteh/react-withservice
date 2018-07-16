@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/barteh/react-withservice/issues"
   },
-  "homepage": "https://github.com/barteh/react-withservice#readme"
+  "homepage": "https://github.com/barteh/react-withservice#readme",
+  "dependencies": {
+    "@barteh/btservice": "^1.0.23"
+  }
 }
