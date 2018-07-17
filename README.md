@@ -1,4 +1,4 @@
-# react-withserver
+# react-withservice
 - - -
   ### An  HOC injects and manages observable data like rxjs and other services in a react Component
 
