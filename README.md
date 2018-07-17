@@ -81,6 +81,13 @@ const servicesObject={
 }
 
 
+export default withService(servicesObject)(Comp);
+
+
+
+``` 
+
+
 #### Auto subcbscribe/unsubscribe
 > when register a service e.i. `service:(x,y)=>param*5` component automaticly subscribe to this service and will render when that parameter change. for example if `x=5,y=6` 
 component will render for this params and wont subscribe for `x=5,y=1`
@@ -89,11 +96,7 @@ component will render for this params and wont subscribe for `x=5,y=1`
 > this clause `params:props=>[props.x,props.match.params.y]` is a function, gives props as a parameter and returns series of mapped params just like service's function parameters. hoc binds this props to params and component will render and subscribe with new params.
 
 
-export default withService(servicesObject)(Comp);
 
-
-
-``` 
 
 ### license: MIT
 
