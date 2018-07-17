@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Rx from 'rxjs';
-import {Refresh} from "@material-ui/icons";
-import {CircularProgress, Button} from '@material-ui/core';
+
 import {withRouter} from 'react-router-dom';
 import {BtService} from 'bt-common';
 
@@ -202,24 +201,7 @@ export const withService = (srvs) => Comp => {
 
             return (
                 <div>
-                    {this.state.error && <div
-                        style={{
-                        textAlign: "center",
-                        padding: "10px"
-                    }}>
-
-                        <Button variant="fab" aria-label="refresh" onClick={this.refresh}>
-                            <Refresh/>
-                        </Button>
-
-                    </div>}
-                    {(!this.canrender && !this.state.error) && <div
-                        style={{
-                        textAlign: "center",
-                        padding: "10px"
-                    }}>
-                        <CircularProgress/></div>}
-                    {this.canrender && <Comp {...this.props} {...this.state}/>}
+                    {!this.state.error &&  <Comp {...this.props} {...this.state}/>}
                 </div>
             );
         }
