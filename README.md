@@ -1,6 +1,6 @@
 # react-withservice
 - - -
-  ### An  HOC injects and manages observable data like rxjs and other services in a react Component
+###  An HOC injects and manages observable data like rxjs and other services in a react Component
 
 > with using this HOC we can use any data object contains simple primitive (string | Number), complex Object, a function, Promise and rxjs observables in react components.
 > dont worry about subscribes and unsubscribes, this HOC automaticaly manages them.
