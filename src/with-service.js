@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import Rx from 'rxjs';
 
 import {withRouter} from 'react-router-dom';
-import {BtService} from 'bt-common';
+import {AsService} from '@barteh/as-service';
+
 
 /**
  *injects services into react component
@@ -10,7 +11,8 @@ import {BtService} from 'bt-common';
  * @param {an object contains services and actions} srvs
  */
 export const withService = (srvs) => Comp => {
-    return withRouter(class extends Component {
+    //return withRouter(
+      return  class extends Component {
 
         sub = null;
         data = {};
@@ -57,9 +59,9 @@ export const withService = (srvs) => Comp => {
                     names.push(a);
                     const srv = srvs.services[a];
 
-                    const service = srv.service instanceof BtService
+                    const service = srv.service instanceof AsService
                         ? srv.service
-                        : new BtService(srv.service);
+                        : new AsService(srv.service);
                     const params = srv.params
                         ? srv.params(props)
                         : [];
@@ -160,7 +162,7 @@ export const withService = (srvs) => Comp => {
                 console.log(709, action);
 
                 const fn = (...params) => {
-                    if (action.service instanceof BtService) {
+                    if (action.service instanceof AsService) {
                         return action
                             .service
                             .load
@@ -205,7 +207,8 @@ export const withService = (srvs) => Comp => {
                 </div>
             );
         }
-    })
+    }
+//)
 }
 
 export default withService;

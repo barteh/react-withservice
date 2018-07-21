@@ -30,7 +30,7 @@ import {withService} from @barteh/react-withservice
 
 ```js
 import React, { Component } from 'react';
-import  { BtService } from '@barteh/btservice';
+import  { AsService } from '@barteh/AsService';
 import Rx from "rxjs"
 class Comp extends Component {
     render() {
@@ -75,7 +75,7 @@ const servicesObject={
         }
     },
     actions:{ // injects as functions to props
-        deleteUser:new BtService(ui=>BtServer("myserversideController/deleteuser",{userid:ui}))
+        deleteUser:new AsService(ui=>BtServer("myserversideController/deleteuser",{userid:ui}))
 
     }
 }
@@ -94,6 +94,22 @@ component will render for this params and wont subscribe for `x=5,y=1`
 
 #### parameter mapping (params clause):
 > this clause `params:props=>[props.x,props.match.params.y]` is a function, gives props as a parameter and returns series of mapped params just like service's function parameters. hoc binds this props to params and component will render and subscribe with new params.
+
+
+## build
+
+```js
+npm run build
+
+```
+
+
+
+
+### Related packages
+[AsService](https://www.npmjs.com/package/@barteh/as-service) a wrapper for everything like object promise or rxjs observables to reloadable and injectable service
+
+[Machinize](https://www.npmjs.com/package/@barteh/machinize) a javascript library for creating advanced finit state machine (fsm) with auto transition and observable machine
 
 
 
