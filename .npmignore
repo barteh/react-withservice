@@ -1,4 +1,7 @@
 src
 .git
 .npmignore
+.coveralls.yml
+.travis.yml
+
 
