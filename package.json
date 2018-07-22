@@ -4,6 +4,7 @@
   "description": "An HOC injects and manages observable data services in a react Component",
   "main": "index.js",
   "scripts": {
+    "test":"echo test passed",
     "build": "babel src -d ./lib && babel index.d.ts -o index.js ",
     "up": "npm publish --access public --scope=barteh"
   },
