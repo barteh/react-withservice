@@ -1,8 +1,7 @@
 # react-withservice
 - - -
 
-[![GitHub version](https://badge.fury.io/gh/barteh%2Freact-withservice.svg)](https://badge.fury.io/gh/barteh%2Freact-withservice) [![Build Status](https://travis-ci.org/barteh/react-withservice.svg?branch=master)](https://travis-ci.org/barteh/react-withservice)[![Coverage Status](https://coveralls.io/repos/github/barteh/react-withservice/badge.svg?branch=master)](https://coveralls.io/github/barteh/react-withservice?branch=master)
-
+[![GitHub version](https://badge.fury.io/gh/barteh%2Freact-withservice.svg)](https://badge.fury.io/gh/barteh%2Freact-withservice) [![Build Status](https://travis-ci.org/barteh/react-withservice.svg?branch=master)](https://travis-ci.org/barteh/react-withservice)
 ###  An HOC injects and manages observable data like rxjs and other services in a react Component
 
 > with using this HOC we can use any data object contains simple primitive (string | Number), complex Object, a function, Promise and rxjs observables in react components.
