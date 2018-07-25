@@ -4,7 +4,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/barteh%2Freact-withservice.svg)](https://badge.fury.io/gh/barteh%2Freact-withservice) [![Build Status](https://travis-ci.org/barteh/react-withservice.svg?branch=master)](https://travis-ci.org/barteh/react-withservice)
 
-### An HOC injects and manages observable data like rxjs and other services in a react Component
+### A HOC injects and manages observable data like rxjs and other services in a react Component
 
 > with using this HOC we can use any data object contains simple primitive (string | Number), complex Object, a function, Promise and rxjs observables in react components.
 > dont worry about subscribes and unsubscribes, this HOC automaticaly manages them.
@@ -44,7 +44,7 @@ class Comp extends Component {
                 {srv4   <div>{srv4.name}</div>}
 
 
-                <button 
+                <button
                     onclick={ () => deleteUser(5) }>
                     deleteUser
                 </button>
@@ -61,7 +61,7 @@ const servicesObject = {
         srv2: {
             service:(a, b) => {name:`im srv2.name: ${a}-${b}`},
             params: props => [props.a,props.b], //mapped props to service parameter
-            onAfterCall: props => {}, //do somthing after call 
+            onAfterCall: props => {}, //do somthing after call
             onBeforCall: props => true, //a blockable hook
             map: a => a.name //mappes recieved data
 
