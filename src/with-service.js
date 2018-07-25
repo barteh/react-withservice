@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Rx from 'rxjs';
 
-import {withRouter} from 'react-router-dom';
+
 import {AsService} from '@barteh/as-service';
 
 
@@ -83,7 +83,7 @@ export const withService = (srvs) => Comp => {
                                 .call(service, ...params)
                                 .then(b => {
                                     if (srv.onAfterCall) 
-                                        srv.onAfterCall(props);
+                                        srv.onAfterCall(props,b);
                                     }
                                 )
                                 .catch(e => {
@@ -131,7 +131,7 @@ export const withService = (srvs) => Comp => {
 
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
 
             this.setServices(nextProps);
             return;
@@ -142,7 +142,7 @@ export const withService = (srvs) => Comp => {
         canrender = false;
         // shouldComponentUpdate(nextProps, nextState) {     return this.canrender; }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
 
             this.lastProps = {};
             const {services, actions} = srvs;
@@ -176,12 +176,12 @@ export const withService = (srvs) => Comp => {
                                 if (action.onError) 
                                     action.onError(e)
                             });
-                    } else if (typeof action.service) {
+                    } else if (typeof action.service==="function") {
                         return action
                             .service
                             .call(action.service, ...params)
                     } else {
-                        return (...params) => action.service
+                        return (/*...params*/) => action.service
                     }
                 }
                 outstate[act] = fn;

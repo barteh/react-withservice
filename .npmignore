@@ -3,5 +3,8 @@ src
 .npmignore
 .coveralls.yml
 .travis.yml
+.eslintrc
+.eslintignore
+.babelrc
 
 
