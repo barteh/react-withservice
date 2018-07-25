@@ -6,5 +6,11 @@ src
 .eslintrc
 .eslintignore
 .babelrc
+.vs
+.gitignore
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+PULL_REQUEST_TEMPLATE.md
+
 
 
