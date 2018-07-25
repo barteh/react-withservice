@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Rx from 'rxjs';
 
-import {withRouter} from 'react-router-dom';
-import {AsService} from '@barteh/as-service';
+import { withRouter } from 'react-router-dom';
+import { AsService } from '@barteh/as-service';
 
 
 /**
@@ -12,7 +12,7 @@ import {AsService} from '@barteh/as-service';
  */
 export const withService = (srvs) => Comp => {
     //return withRouter(
-      return  class extends Component {
+    return class extends Component {
 
         sub = null;
         data = {};
@@ -23,31 +23,31 @@ export const withService = (srvs) => Comp => {
 
         constructor(props) {
             super(props);
-            this.refresh = this
-                .refresh
-                .bind(this);
+            this.refresh = this.refresh.bind(this);
         }
+
         refresh() {
             this.setServices(this.props);
         }
+
         compareParams(a, b) {
             return JSON.stringify(a) === JSON.stringify(b);
         }
 
         componentWillUnmount() {
-            if (this.sub) 
+            if (this.sub)
                 this.sub.unsubscribe();
-            
+
             this.lastProps = {};
 
         }
 
         setServices(props) {
 
-            this.canrender = false;
-            if (this.sub) 
+            this.canRender = false;
+            if (this.sub)
                 this.sub.unsubscribe();
-            
+
             const names = [];
             const observables = [];
             const errorObservables = [];
@@ -82,35 +82,33 @@ export const withService = (srvs) => Comp => {
                             Fn
                                 .call(service, ...params)
                                 .then(b => {
-                                    if (srv.onAfterCall) 
+                                    if (srv.onAfterCall)
                                         srv.onAfterCall(props);
-                                    }
+                                }
                                 )
                                 .catch(e => {
-                                    if (srv.onError) 
+                                    if (srv.onError)
                                         srv.onError(e, props);
-                                    
+
                                     this.lastProps[a] = [];
-                                    this.setState({error: true});
+                                    this.setState({ error: true });
                                 });
 
                         }
                     }
-                    this
-                        .traceServices
+                    this.traceServices
                         .push(trace);
 
                     this.lastProps[a] = props;
                     return "";
                 });
 
-            this.canrender = true;
-            this
-                .traceServices
-                .map(c => this.canrender = this.canrender && c)
+            this.canRender = true;
+            this.traceServices
+                .map(c => this.canRender = this.canRender && c)
 
-            // this.errorSub = Rx     .Observable     .combineLatest(...errorObservables)
-            // .subscribe(e => {         this.setState({error: true})     })
+            // this.errorSub = Rx.Observable.combineLatest(...errorObservables)
+            // .subscribe(e => { this.setState({error: true}) })
 
             this.sub = Rx
                 .Observable
@@ -123,7 +121,7 @@ export const withService = (srvs) => Comp => {
 
                         return "";
                     })
-                    this.canrender = true;
+                    this.canRender = true;
                     o["error"] = false;
                     this.setState(o);
 
@@ -132,30 +130,28 @@ export const withService = (srvs) => Comp => {
         }
 
         componentWillReceiveProps(nextProps) {
-
             this.setServices(nextProps);
             return;
-
         }
 
         afterfifo = [];
-        canrender = false;
-        // shouldComponentUpdate(nextProps, nextState) {     return this.canrender; }
+        canRender = false;
+        // shouldComponentUpdate(nextProps, nextState) {     return this.canRender; }
 
         componentWillMount() {
 
             this.lastProps = {};
-            const {services, actions} = srvs;
-            let outstate = {
+            const { services, actions } = srvs;
+            let outState = {
                 services: {}
 
             };
 
             for (let ser in services) {
-                outstate.services[ser] = services[ser].service;
+                outState.services[ser] = services[ser].service;
             }
 
-            this.services = outstate.services;
+            this.services = outState.services;
 
             for (let act in actions) {
                 const action = actions[act];
@@ -168,12 +164,12 @@ export const withService = (srvs) => Comp => {
                             .load
                             .call(action.service, ...params)
                             .then(a => {
-                                if (action.onAfterCall) 
+                                if (action.onAfterCall)
                                     action.onAfterCall(a);
                                 return a;
                             })
                             .catch(e => {
-                                if (action.onError) 
+                                if (action.onError)
                                     action.onError(e)
                             });
                     } else if (typeof action.service) {
@@ -184,7 +180,7 @@ export const withService = (srvs) => Comp => {
                         return (...params) => action.service
                     }
                 }
-                outstate[act] = fn;
+                outState[act] = fn;
                 action
                     .service
                     .load
@@ -195,7 +191,7 @@ export const withService = (srvs) => Comp => {
             //this.actions[act]=actions[act].service;
             this.setServices(this.props);
 
-            this.setState(outstate);
+            this.setState(outState);
 
         }
 
@@ -203,12 +199,12 @@ export const withService = (srvs) => Comp => {
 
             return (
                 <div>
-                    {!this.state.error &&  <Comp {...this.props} {...this.state}/>}
+                    {!this.state.error && <Comp {...this.props} {...this.state} />}
                 </div>
             );
         }
     }
-//)
+    //)
 }
 
 export default withService;
