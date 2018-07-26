@@ -203,7 +203,7 @@ export const withService = (srvs) => Comp => {
 
             return (
                 <div>
-                    {!this.state.error &&  <Comp {...this.props} {...this.state}/>}
+                    {this.canrender &&  <Comp {...this.props} {...this.state}/>}
                 </div>
             );
         }
