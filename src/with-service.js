@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import Rx from 'rxjs';
 
-
 import {AsService} from '@barteh/as-service';
-
 
 /**
  *injects services into react component
@@ -12,7 +10,7 @@ import {AsService} from '@barteh/as-service';
  */
 export const withService = (srvs) => Comp => {
     //return withRouter(
-      return  class extends Component {
+    return class extends Component {
 
         sub = null;
         data = {};
@@ -59,19 +57,23 @@ export const withService = (srvs) => Comp => {
                     names.push(a);
                     const srv = srvs.services[a];
 
-                    const service = srv.service instanceof AsService
+                    
+                    //const service = srv.service instanceof AsService
+                    const service = (srv.service && srv.service.$$isAsService)
                         ? srv.service
                         : new AsService(srv.service);
+
+
                     const params = srv.params
                         ? srv.params(props)
                         : [];
 
                     observables.push(service.Observable(...params));
                     errorObservables.push(service.ErrorObservable(...params));
-
+                    
                     let trace = false;
                     if (!this.compareParams(this.lastProps[a], params)) {
-                        console.log(77777777, this.lastProps[a], params)
+                        
                         if (!srv.onBeforeCall || (srv.onBeforeCall && srv.onBeforeCall(props))) {
 
                             trace = srv.reload;
@@ -83,7 +85,7 @@ export const withService = (srvs) => Comp => {
                                 .call(service, ...params)
                                 .then(b => {
                                     if (srv.onAfterCall) 
-                                        srv.onAfterCall(props,b);
+                                        srv.onAfterCall(props, b);
                                     }
                                 )
                                 .catch(e => {
@@ -156,40 +158,41 @@ export const withService = (srvs) => Comp => {
             }
 
             this.services = outstate.services;
+            if (actions !== undefined) {
+                for (let act in actions) {
+                    const action = actions[act];
+                    console.log(709, action);
 
-            for (let act in actions) {
-                const action = actions[act];
-                console.log(709, action);
-
-                const fn = (...params) => {
-                    if (action.service instanceof AsService) {
-                        return action
-                            .service
-                            .load
-                            .call(action.service, ...params)
-                            .then(a => {
-                                if (action.onAfterCall) 
-                                    action.onAfterCall(a);
-                                return a;
-                            })
-                            .catch(e => {
-                                if (action.onError) 
-                                    action.onError(e)
-                            });
-                    } else if (typeof action.service==="function") {
-                        return action
-                            .service
-                            .call(action.service, ...params)
-                    } else {
-                        return (/*...params*/) => action.service
+                    const fn = (...params) => {
+                        if (action.service instanceof AsService) {
+                            return action
+                                .service
+                                .load
+                                .call(action.service, ...params)
+                                .then(a => {
+                                    if (action.onAfterCall) 
+                                        action.onAfterCall(a);
+                                    return a;
+                                })
+                                .catch(e => {
+                                    if (action.onError) 
+                                        action.onError(e)
+                                });
+                        } else if (typeof action.service === "function") {
+                            return action
+                                .service
+                                .call(action.service, ...params)
+                        } else {
+                            return (/*...params*/) => action.service
+                        }
                     }
-                }
-                outstate[act] = fn;
-                action
-                    .service
-                    .load
-                    .bind(action);
+                    outstate[act] = fn;
+                    action
+                        .service
+                        .load
+                        .bind(action);
 
+                }
             }
 
             //this.actions[act]=actions[act].service;
@@ -203,12 +206,12 @@ export const withService = (srvs) => Comp => {
 
             return (
                 <div>
-                    {this.canrender &&  <Comp {...this.props} {...this.state}/>}
+                    {this.canrender && <Comp {...this.props} {...this.state}/>}
                 </div>
             );
         }
     }
-//)
+    //)
 }
 
 export default withService;

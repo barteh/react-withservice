@@ -1,6 +1,6 @@
 {
   "name": "@barteh/react-withservice",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "An HOC injects and manages observable data services in a react Component",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/barteh/react-withservice#readme",
   "dependencies": {
-    "@barteh/as-service": "^1.0.24",
+    "@barteh/as-service": "^1.0.25",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "rxjs": "^5.5.10"
