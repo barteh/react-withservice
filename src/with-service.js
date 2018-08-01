@@ -41,7 +41,8 @@ export const withService = (srvs) => Comp => {
         }
 
         setServices(props) {
-
+            if (srvs.services === undefined) 
+                return;
             this.canrender = false;
             if (this.sub) 
                 this.sub.unsubscribe();
@@ -50,6 +51,7 @@ export const withService = (srvs) => Comp => {
             const observables = [];
             const errorObservables = [];
             this.traceServices = [];
+
             Object
                 .keys(srvs.services)
                 .map(a => {
@@ -57,10 +59,12 @@ export const withService = (srvs) => Comp => {
                     names.push(a);
                     const srv = srvs.services[a];
 
-                    //const service = srv.service instanceof AsService
-                    const service = (srv.service && srv.service.$$isAsService)
-                        ? srv.service
-                        : new AsService(srv.service);
+                    const source=srv.source!==undefined?srv.source:srv;
+                    const service = (source!==undefined && source.$$isAsService)
+                        ? source
+                        : new AsService(source);
+
+console.log(369,service);
 
                     const params = srv.params
                         ? srv.params(props)
@@ -160,37 +164,77 @@ export const withService = (srvs) => Comp => {
             this.services = outstate.services;
             if (actions !== undefined) {
                 for (let act in actions) {
+
                     const action = actions[act];
-                    console.log(709, action);
+
+                    action.service = action.action !== undefined
+                        ? action.action
+                        : action;
 
                     const fn = (...params) => {
-                        if (action.service instanceof AsService) {
-                            return action
+                        if (action.service.$$isAsService) {
+
+                            //if (action.service instanceof AsService) {
+                            let ret = action
                                 .service
                                 .load
                                 .call(action.service, ...params)
                                 .then(a => {
+                                    console.log(1339, a);
                                     if (action.onAfterCall) 
                                         action.onAfterCall(a);
+                                    
+                                    //res(a);
                                     return a;
                                 })
                                 .catch(e => {
                                     if (action.onError) 
-                                        action.onError(e)
+                                        action.onError(e);
+                                    
+                                    //rej(e);
+                                    return e;
                                 });
+                            console.log(123456, ret);
+                            return ret;
+
                         } else if (typeof action.service === "function") {
-                            return action
-                                .service
-                                .call(action.service, ...params)
+                            return new Promise((res, rej) => {
+                                try {
+                                    const retval = action
+                                        .service
+                                        .call(action.service, ...params);
+
+                                    if (action.onAfterCall) 
+                                        action.onAfterCall(retval);
+                                    res(retval);
+                                    return retval;
+
+                                } catch (e) {
+                                    if (action.onError) 
+                                        action.onError(e)
+                                    rej(e);
+                                    return e;
+                                }
+
+                            })
+
                         } else {
-                            return (/*...params*/) => action.service
+                            return new Promise((res, rej) => {
+                                try {
+                                    res(action.service);
+                                    return action.service;
+
+                                } catch (e) {
+                                    rej(e);
+                                    return e;
+                                }
+                            })
                         }
                     }
-                    outstate[act] = fn;
-                    action
-                        .service
-                        .load
-                        .bind(action);
+                    const fn2 = fn.bind(action);
+
+                    outstate[act] = fn2;
+                    // action     .service     .load     .bind(action);
 
                 }
             }
