@@ -4,11 +4,25 @@
 
 [![GitHub version](https://badge.fury.io/gh/barteh%2Freact-withservice.svg)](https://badge.fury.io/gh/barteh%2Freact-withservice) [![Build Status](https://travis-ci.org/barteh/react-withservice.svg?branch=master)](https://travis-ci.org/barteh/react-withservice)
 
-### A HOC injects and manages observable data like rxjs and other services in a react Component
+### A High Order Component (HOC) injects and manages observable data like rxjs observables, Promises and all other type of data in a react Component.
+
 
 > with using this HOC we can use any data object contains simple primitive (string | Number), complex Object, a function, Promise and rxjs observables in react components.
 > dont worry about subscribes and unsubscribes, this HOC automaticaly manages them.
 > other hand manages services as actions by injecting directly as functions to use in component
+
+
+### why use react-withservice
+> some developers want to use event driven pattern and so Rxjs in reaact projects. all knows this is very hard. according our experiance we created this tool for using easily Observabels in reactjs component. without need to manage subscriptions.
+- dont worry about subscribe and unsubscribes
+- no need redux to manage data model.
+- observable data ready in props.
+- actions as function in props.
+- some needed hooks like onAfter, onBefor,onError can bind,
+- manage prerequirment data for  render.
+- and many usefull features
+
+
 
 ## Install
 

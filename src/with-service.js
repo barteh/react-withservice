@@ -57,23 +57,23 @@ export const withService = (srvs) => Comp => {
                     names.push(a);
                     const srv = srvs.services[a];
 
-                    
                     //const service = srv.service instanceof AsService
                     const service = (srv.service && srv.service.$$isAsService)
                         ? srv.service
                         : new AsService(srv.service);
 
-
                     const params = srv.params
                         ? srv.params(props)
                         : [];
-
+                    if (!srv.isRequire) 
+                        service.publishNull(...params);
+                    
                     observables.push(service.Observable(...params));
                     errorObservables.push(service.ErrorObservable(...params));
-                    
+
                     let trace = false;
                     if (!this.compareParams(this.lastProps[a], params)) {
-                        
+
                         if (!srv.onBeforeCall || (srv.onBeforeCall && srv.onBeforeCall(props))) {
 
                             trace = srv.reload;
