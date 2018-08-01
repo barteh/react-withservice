@@ -45,11 +45,11 @@ import {withService} from @barteh/react-withservice
 
 ```js
 import React, { Component } from 'react';
-import  { AsService } from '@barteh/AsService';
+import  { AsService, Server } from '@barteh/AsService';
 import Rx from "rxjs"
 class Comp extends Component {
     render() {
-        const {srv1,srv2,srv3,srv4,deleteUser}=this.props;
+        const { srv1, srv2, srv3, srv4, deleteUser } = this.props;
         return (
             <div>
                 <div>{srv1}</div>
@@ -90,7 +90,7 @@ const servicesObject = {
         }
     },
     actions: { // injects as functions to props
-        deleteUser: new AsService(ui => BtServer("myserversideController/deleteuser", { userid: ui }))
+        deleteUser: new AsService(ui => Server("myserversideController/deleteuser", { userid: ui }))
 
     }
 }
