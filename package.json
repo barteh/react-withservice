@@ -1,6 +1,6 @@
 {
   "name": "@barteh/react-withservice",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "A HOC injects and manages observable data services in a react Component",
   "main": "index.js",
   "scripts": {
