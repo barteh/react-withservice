@@ -3,14 +3,13 @@ import Rx from 'rxjs';
 
 import {AsService} from '@barteh/as-service';
 
-
 /**
  *injects services into react component
  no need to subscribe or unsubscribe
  * @param {an object contains services and actions} srvs
  */
 export const withService = (srvs) => Comp => {
-
+    //return withRouter(
     return class extends Component {
 
         sub = null;
@@ -20,15 +19,13 @@ export const withService = (srvs) => Comp => {
         state = {};
         lastProps = {};
 
-        notRequireSubscriptions = [];
-
         constructor(props) {
             super(props);
-            this.retry = this
-                .retry
+            this.refresh = this
+                .refresh
                 .bind(this);
         }
-        retry() {
+        refresh() {
             this.setServices(this.props);
         }
         compareParams(a, b) {
@@ -44,137 +41,95 @@ export const withService = (srvs) => Comp => {
         }
 
         setServices(props) {
-
-            this
-                .notRequireSubscriptions
-                .map(a => a.unsubscribe());
-
-            this.notRequireSubscriptions = [];
-
             if (srvs.services === undefined) 
                 return;
-            this.canRender = true;
+            this.canrender = false;
             if (this.sub) 
                 this.sub.unsubscribe();
             
             const names = [];
             const observables = [];
-            const notRequireObservables = [];
-
-            const requiredNames = [];
-            const notRequireNames = [];
-
             const errorObservables = [];
             this.traceServices = [];
 
-            const keys = Object.keys(srvs.services);
-            const ready = new Array(keys.length);
+            Object
+                .keys(srvs.services)
+                .map(a => {
 
-            keys.map((a, i) => {
+                    names.push(a);
+                    const srv = srvs.services[a];
 
-                names.push(a);
-                const srv = srvs.services[a];
+                    const source=srv.source!==undefined?srv.source:srv;
+                    const service = (source!==undefined && source.$$isAsService)
+                        ? source
+                        : new AsService(source);
 
-                const source = srv.source !== undefined
-                    ? srv.source
-                    : srv;
-                const service = (source !== undefined && source.$$isAsService)
-                    ? source
-                    : new AsService(source);
+console.log(369,service);
 
-                const params = srv.params
-                    ? srv.params(props)
-                    : [];
-
-                if (srv.isRequire) {
-                    requiredNames.push(a);
+                    const params = srv.params
+                        ? srv.params(props)
+                        : [];
+                    if (!srv.isRequire) 
+                        service.publishNull(...params);
+                    
                     observables.push(service.Observable(...params));
-                } else {
-                    notRequireNames.push(a);
-                    notRequireObservables.push(service.Observable(...params));
-                }
-                errorObservables.push(service.ErrorObservable(...params));
+                    errorObservables.push(service.ErrorObservable(...params));
 
-                ready[i] = (!srv.isRequire || service.getState(...params) !== 'start');
+                    let trace = false;
+                    if (!this.compareParams(this.lastProps[a], params)) {
 
-                let trace = false;
-                if (!this.compareParams(this.lastProps[a], params)) {
+                        if (!srv.onBeforeCall || (srv.onBeforeCall && srv.onBeforeCall(props))) {
 
-                    if (!srv.onBeforeCall || (srv.onBeforeCall && srv.onBeforeCall(props))) {
+                            trace = srv.reload;
+                            const Fn = srv.reload
+                                ? service.load
+                                : service.get;
 
-                        trace = srv.reload;
-                        const Fn = (srv.reload)
-                            ? service.load
-                            : service.get;
+                            Fn
+                                .call(service, ...params)
+                                .then(b => {
+                                    if (srv.onAfterCall) 
+                                        srv.onAfterCall(props, b);
+                                    }
+                                )
+                                .catch(e => {
+                                    if (srv.onError) 
+                                        srv.onError(e, props);
+                                    
+                                    this.lastProps[a] = [];
+                                    this.setState({error: true});
+                                });
 
-                        Fn
-                            .call(service, ...params)
-                            .then(b => {
-                                if (srv.onAfterCall) {
-                                    ready[i] = true;
-                                    srv.onAfterCall(props, b);
-                                }
-                                return b;
-                            })
-                            .catch(e => {
-                                if (srv.onError) {
-                                    ready[i] = false;
-                                    srv.onError(e, props);
-                                }
-                                this.lastProps[a] = [];
-                                this.setState({error: true});
-                                return e;
-                            });
-
+                        }
                     }
-                }
-                this
-                    .traceServices
-                    .push(trace);
+                    this
+                        .traceServices
+                        .push(trace);
 
-                this.lastProps[a] = props;
-                return "";
-            });
+                    this.lastProps[a] = props;
+                    return "";
+                });
 
-         
+            this.canrender = true;
+            this
+                .traceServices
+                .map(c => this.canrender = this.canrender && c)
 
-            ready.map(a => {
-                this.canRender = this.canRender && a;
-                return false;
-            })
-
-            if (this.canRender) {
-                this.setState({canRender: true})
-            }
-
-            notRequireObservables.map((b, j) => {
-                this
-                    .notRequireSubscriptions
-                    .push(b.subscribe(c => {
-
-                        this.setState({
-                            [notRequireNames[j]]: c
-                        });
-
-                        return "";
-                    }));
-                return "";
-            });
+            // this.errorSub = Rx     .Observable     .combineLatest(...errorObservables)
+            // .subscribe(e => {         this.setState({error: true})     })
 
             this.sub = Rx
                 .Observable
                 .combineLatest(...observables)
                 .subscribe(a => {
 
-                    let o = {
-                        canRender: true
-                    };
+                    let o = {}
                     a.map((b, i) => {
-                        o[requiredNames[i]] = b;
+                        o[names[i]] = b;
 
                         return "";
-                    });
-
+                    })
+                    this.canrender = true;
                     o["error"] = false;
                     this.setState(o);
 
@@ -190,8 +145,8 @@ export const withService = (srvs) => Comp => {
         }
 
         afterfifo = [];
-        canRender = false;
-        
+        canrender = false;
+        // shouldComponentUpdate(nextProps, nextState) {     return this.canrender; }
 
         UNSAFE_componentWillMount() {
 
@@ -218,27 +173,28 @@ export const withService = (srvs) => Comp => {
 
                     const fn = (...params) => {
                         if (action.service.$$isAsService) {
-                            
+
+                            //if (action.service instanceof AsService) {
                             let ret = action
                                 .service
                                 .load
                                 .call(action.service, ...params)
                                 .then(a => {
-                                    
+                                    console.log(1339, a);
                                     if (action.onAfterCall) 
                                         action.onAfterCall(a);
                                     
-                                    
+                                    //res(a);
                                     return a;
                                 })
                                 .catch(e => {
                                     if (action.onError) 
                                         action.onError(e);
                                     
-                                    
+                                    //rej(e);
                                     return e;
                                 });
-
+                            console.log(123456, ret);
                             return ret;
 
                         } else if (typeof action.service === "function") {
@@ -278,12 +234,12 @@ export const withService = (srvs) => Comp => {
                     const fn2 = fn.bind(action);
 
                     outstate[act] = fn2;
-                    
+                    // action     .service     .load     .bind(action);
 
                 }
             }
 
-           
+            //this.actions[act]=actions[act].service;
             this.setServices(this.props);
 
             this.setState(outstate);
@@ -291,17 +247,15 @@ export const withService = (srvs) => Comp => {
         }
 
         render() {
-            
+
             return (
                 <div>
-                    {(this.state.error && srvs.error !== undefined) && <srvs.error retry={this.retry}/>}
-                    {(!this.state.error && !this.state.canRender && srvs.loading !== undefined) && <srvs.loading/>}
-                    {(this.state.canRender && !this.state.error) && <Comp {...this.props} {...this.state}/>}
+                    {this.canrender && <Comp {...this.props} {...this.state}/>}
                 </div>
             );
         }
     }
-    
+    //)
 }
 
 export default withService;
