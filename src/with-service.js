@@ -294,7 +294,7 @@ export const withService = (srvs) => Comp => {
             
             return (
                 <React.Fragment>
-                    {(this.state.error && srvs.error !== undefined) && <srvs.error retry={this.retry}/>}
+                    {(this.state.error && srvs.error !== undefined) && <srvs.error retry={this.retry} {...this.props}/>}
                     {(!this.state.error && !this.state.canRender && srvs.loading !== undefined) && <srvs.loading/>}
                     {(this.state.canRender && !this.state.error) && <Comp {...this.props} {...this.state}/>}
                 </React.Fragment>
