@@ -293,11 +293,11 @@ export const withService = (srvs) => Comp => {
         render() {
             
             return (
-                <div>
+                <React.Fragment>
                     {(this.state.error && srvs.error !== undefined) && <srvs.error retry={this.retry}/>}
                     {(!this.state.error && !this.state.canRender && srvs.loading !== undefined) && <srvs.loading/>}
                     {(this.state.canRender && !this.state.error) && <Comp {...this.props} {...this.state}/>}
-                </div>
+                </React.Fragment>
             );
         }
     }
