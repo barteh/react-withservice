@@ -7,7 +7,8 @@
     "test": "npm run build && echo \"test passed\"",
     "build": "npm run lint && babel src -d ./lib && babel index.d.ts -o index.js ",
     "up": "npm publish --access public --scope=barteh",
-    "lint": "./node_modules/.bin/eslint src/**/*.js && echo \"eslint code is ok\""
+    "lint": "./node_modules/.bin/eslint src/**/*.js && echo \"eslint code is ok\"",
+    "bt-update": "npm i @barteh/as-service@latest -S"
   },
   "repository": {
     "type": "git",
@@ -34,7 +35,7 @@
   },
   "homepage": "https://github.com/barteh/react-withservice#readme",
   "dependencies": {
-    "@barteh/as-service": "^1.0.34",
+    "@barteh/as-service": "^1.0.36",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "rxjs": "^5.5.10"
