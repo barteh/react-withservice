@@ -3,7 +3,6 @@ import Rx from 'rxjs';
 
 import {AsService} from '@barteh/as-service';
 
-
 /**
  *injects services into react component
  no need to subscribe or unsubscribe
@@ -34,8 +33,9 @@ export const withService = (srvs) => Comp => {
         compareParams(a, b) {
             return JSON.stringify(a) === JSON.stringify(b);
         }
-
+        unmounted = false;
         componentWillUnmount() {
+            this.unmounted = this;
             if (this.sub) 
                 this.sub.unsubscribe();
             
@@ -122,7 +122,8 @@ export const withService = (srvs) => Comp => {
                                     srv.onError(e, props);
                                 }
                                 this.lastProps[a] = [];
-                                this.setState({error: true});
+                                if (!this.unmounted) 
+                                    this.setState({error: true});
                                 return e;
                             });
 
@@ -136,26 +137,25 @@ export const withService = (srvs) => Comp => {
                 return "";
             });
 
-         
-
             ready.map(a => {
                 this.canRender = this.canRender && a;
                 return false;
             })
 
             if (this.canRender) {
-                this.setState({canRender: true})
+                if (!this.unmounted) 
+                    this.setState({canRender: true})
             }
 
             notRequireObservables.map((b, j) => {
                 this
                     .notRequireSubscriptions
                     .push(b.subscribe(c => {
-
-                        this.setState({
-                            [notRequireNames[j]]: c
-                        });
-
+                        if (!this.unmounted) 
+                            this.setState({
+                                [notRequireNames[j]]: c
+                            });
+                        
                         return "";
                     }));
                 return "";
@@ -176,9 +176,11 @@ export const withService = (srvs) => Comp => {
                     });
 
                     o["error"] = false;
-                    this.setState(o);
+                    if (!this.unmounted) 
+                        this.setState(o);
 
-                })
+                    }
+                )
 
         }
 
@@ -191,7 +193,6 @@ export const withService = (srvs) => Comp => {
 
         afterfifo = [];
         canRender = false;
-        
 
         UNSAFE_componentWillMount() {
 
@@ -217,41 +218,55 @@ export const withService = (srvs) => Comp => {
                         : action;
 
                     const fn = (...params) => {
-                        if (action.service.$$isAsService) {
-                            
-                            let ret = action
-                                .service
-                                .load
-                                .call(action.service, ...params)
-                                .then(a => {
-                                    
-                                    if (action.onAfterCall) 
-                                        action.onAfterCall(a);
-                                    
-                                    
-                                    return a;
-                                })
-                                .catch(e => {
-                                    if (action.onError) 
-                                        action.onError(e);
-                                    
-                                    
-                                    return e;
-                                });
+                        // if (action.service.$$isAsService) {     let ret = action         .service
+                        // .load         .call(action.service, ...params)         .then(a => {       if
+                        // (action.onAfterCall)                 action.onAfterCall(a);    return a;
+                        // })         .catch(e => {             if (action.onError) action.onError(e);
+                        //           return e;         }); return ret; } else
 
-                            return ret;
-
-                        } else if (typeof action.service === "function") {
+                        if (typeof action.service === "function" || action.service.$$isAsService) {
                             return new Promise((res, rej) => {
                                 try {
-                                    const retval = action
-                                        .service
-                                        .call(action.service, ...params);
 
-                                    if (action.onAfterCall) 
-                                        action.onAfterCall(retval);
-                                    res(retval);
-                                    return retval;
+                                    const func = action.service.$$isAsService
+                                        ? action
+                                            .service
+                                            .getLoader()
+                                        : action.service;
+                                    const mapper = action.service.$$isAsService
+                                        ? action
+                                            .service
+                                            .getMapper()
+                                        : undefined;
+                                    const beforMapper = func.call(action.service, ...params);
+
+                                    const retval = mapper
+                                        ? mapper(...params)
+                                        : beforMapper;
+
+                                    if (retval instanceof Promise) {
+
+                                        retval.then(a => {
+
+                                            res(a);
+                                            if (action.onAfterCall) {
+
+                                                action.onAfterCall(a);
+                                            }
+                                            return retval;
+                                        }).catch(e => {
+
+                                          //  rej(e);
+                                            if (action.onError) 
+                                                action.onError(e);
+                                            return retval;
+                                        });
+                                        return retval;
+                                    } else {
+                                        res(retval);
+
+                                        return retval;
+                                    }
 
                                 } catch (e) {
                                     if (action.onError) 
@@ -266,10 +281,16 @@ export const withService = (srvs) => Comp => {
                             return new Promise((res, rej) => {
                                 try {
                                     res(action.service);
+
+                                    if (action.onAfterCall) 
+                                        action.onAfterCall(action.service);
+                                    
                                     return action.service;
 
                                 } catch (e) {
                                     rej(e);
+                                    if (action.onError) 
+                                        action.onError(e)
                                     return e;
                                 }
                             })
@@ -278,20 +299,18 @@ export const withService = (srvs) => Comp => {
                     const fn2 = fn.bind(action);
 
                     outstate[act] = fn2;
-                    
 
                 }
             }
 
-           
             this.setServices(this.props);
+            if (!this.unmounted) 
+                this.setState(outstate);
 
-            this.setState(outstate);
-
-        }
-
+            }
+        
         render() {
-            
+
             return (
                 <React.Fragment>
                     {(this.state.error && srvs.error !== undefined) && <srvs.error retry={this.retry} {...this.props}/>}
@@ -301,7 +320,7 @@ export const withService = (srvs) => Comp => {
             );
         }
     }
-    
+
 }
 
 export default withService;
