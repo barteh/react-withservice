@@ -253,26 +253,26 @@ export const withService = (srvs) => Comp => {
 
                                                 action.onAfterCall(a);
                                             }
-                                            return retval;
+                                            
                                         }).catch(e => {
 
-                                          //  rej(e);
+                                            rej(e);
                                             if (action.onError) 
                                                 action.onError(e);
-                                            return retval;
+                                          
                                         });
-                                        return retval;
+                                        
                                     } else {
                                         res(retval);
 
-                                        return retval;
+                                        
                                     }
 
                                 } catch (e) {
                                     if (action.onError) 
                                         action.onError(e)
                                     rej(e);
-                                    return e;
+                                    
                                 }
 
                             })
@@ -285,13 +285,13 @@ export const withService = (srvs) => Comp => {
                                     if (action.onAfterCall) 
                                         action.onAfterCall(action.service);
                                     
-                                    return action.service;
+                                    
 
                                 } catch (e) {
                                     rej(e);
                                     if (action.onError) 
                                         action.onError(e)
-                                    return e;
+                                    
                                 }
                             })
                         }
