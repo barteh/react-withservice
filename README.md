@@ -69,28 +69,41 @@ class Comp extends Component {
 
 const servicesObject = {
     services: {
-        srv1: {
-            service: 9
-        },
+        srv1: 9 // direct difinition
+        ,
         srv2: {
-            service:(a, b) => {name:`im srv2.name: ${a}-${b}`},
+            source:(a, b) => {name:`im srv2.name: ${a}-${b}`},
             params: props => [props.a,props.b], //mapped props to service parameter
             onAfterCall: props => {}, //do somthing after call
             onBeforCall: props => true, //a blockable hook
-            map: a => a.name //mappes recieved data
+            
 
         },
         srv3: {
-            service: a => Rx.Observable.of({ name: `im an rxjs observable:${a}` }),
+            source: a => Rx.Observable.of({ name: `im an rxjs observable:${a}` }),
             params: props => [props.match.x] //maps route params to service
 
         },
         srv4: {
-            service: new Promise((res, rej) => res({ name: "im from promise" }))
+            source: new Promise((res, rej) => res({ name: "im from promise" }))
         }
     },
     actions: { // injects as functions to props
-        deleteUser: new AsService(ui => Server("myserversideController/deleteuser", { userid: ui }))
+        deleteUser: new AsService(ui => Server("myserversideController/deleteuser", { userid: ui })),
+        act2:p=>{return 2*p}, // direct
+
+        act3:axios.get("some resources"),
+
+        act4:{ //with hooks
+            action:axios.get("some other resources"),
+            onBeforCall(...params){
+                return false; //blockable hook guard
+            },
+            onAfterCall(d){
+                // call after action call
+            }
+        
+        }
 
     }
 }
