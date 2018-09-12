@@ -35,7 +35,7 @@ export const withService = (srvs) => Comp => {
         }
         unmounted = false;
         componentWillUnmount() {
-            this.unmounted = this;
+            this.unmounted = true;
             if (this.sub) 
                 this.sub.unsubscribe();
             
