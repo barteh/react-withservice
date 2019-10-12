@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/barteh/react-withservice#readme",
   "dependencies": {
-    "@barteh/as-service": "^1.0.52",
+    "@barteh/as-service": "^1.0.53",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "rxjs": "^5.5.10"
