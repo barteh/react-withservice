@@ -1,0 +1,29 @@
+{
+
+    "psi-header.variables": [
+        ["projectCreationYear", "2018"],
+        ["Author", "Ahad Rafat Talebi"],
+        ["authoremail", "ahadrt@gmail.com"],
+        ["company", "Borna Mehr Fann"],
+        ["trademark","barteh"]
+        
+        
+	],
+	"psi-header.templates": [
+		{
+			"language": "*",
+			"template": [
+				"File: <<filename>>",
+				"Project: <<projectname>>",
+				"File Created: <<filecreated('dddd, Do MMMM YYYY h:mm:ss a')>>",
+				"Author: <<author>> (<<authoremail>>)",
+				"-----",
+				"Last Modified: <<dateformat('dddd, Do MMMM YYYY h:mm:ss a')>>",
+				"Modified By: <<author>> (<<authoremail>>>)",
+				"-----",
+                "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>, <<company>>",
+                "Trademark <<TradeMark>>"
+			]
+		}
+	]
+}

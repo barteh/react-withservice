@@ -1,3 +1,16 @@
+/*
+ * File: with-service.js
+ * Project: @barteh/react-withservice
+ * File Created: Wednesday, 8th August 2018 9:59:01 pm
+ * Author: rafat (ahadrt@gmail.com)
+ * -----
+ * Last Modified: Wednesday, 16th October 2019 1:42:53 am
+ * Modified By: rafat (ahadrt@gmail.com>)
+ * -----
+ * Copyright 2018 - 2019 Borna Mehr Fann, Borna Mehr Fann
+ * Trademark barteh
+ */
+
 import React, {Component} from 'react';
 import Rx from 'rxjs';
 
@@ -10,7 +23,7 @@ import {AsService} from '@barteh/as-service';
  */
 export const withService = (srvs) => Comp => {
 
-    return class extends Component {
+    return class innerWithServer extends Component {
 
         sub = null;
         data = {};

@@ -1,6 +1,6 @@
 {
   "name": "@barteh/react-withservice",
-  "version": "1.0.55",
+  "version": "1.0.56",
   "description": "A HOC injects and manages observable data services in a react Component",
   "main": "index.js",
   "scripts": {
@@ -35,19 +35,20 @@
   },
   "homepage": "https://github.com/barteh/react-withservice#readme",
   "dependencies": {
-    "@barteh/as-service": "^1.0.55",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "@barteh/as-service": "^1.0.56",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
     "rxjs": "^5.5.10"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-react": "^7.6.3",
     "babel-eslint": "^8.2.6",
-    "eslint": "^5.2.0",
-    "eslint-plugin-react": "^7.10.0"
+    "dts-gen": "^0.5.8",
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.16.0"
   }
 }
