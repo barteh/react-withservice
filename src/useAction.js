@@ -10,48 +10,73 @@
  * Copyright 2018 - 2019 Borna Mehr Fann, Borna Mehr Fann
  * Trademark barteh
  */
-import {useState,useEffect} from 'react';
+import {useState, useEffect} from 'react';
+
+/**
+  * @class
+  * @classdesc return type of useAction
+  *
+  */
+class AUseActionReturnType {
+    /**
+     *
+     * @param {string} _status , can be "loading" | "error" | "ready"
+     * @param {any} _data an object or primitives return from servic
+     * @param {number} _error contains http error codes like 404 or 500 ...
+     * @param {function} _run a function can do run or retry geting data for Action
+     */
+    constructor(_status, _data, _error, _run) {
+        this.status = _status;
+        this.data = _data;
+        this.error = _error;
+        this.run = _run;
+    }
+    status;
+    data;
+    error;
+    run;
+    toArray() {
+        return [this.status, this.data, this.error, this.run]
+    }
+}
+
+/**
+ * @description a react hook serves a action as fromis return function with state
+ * @param {function} action promise return
+ * @param  {...any} params
+ * @returns {AUseActionReturnType} {status, data, error, retry}
+ * @description 2 deferent mode of return can be used
+ * 1-{status, data, error, retry}=useService(...)
+ * 2-[status, data, error, retry]=useService(...).toArray()
+ */
 export function useAction(action, ...params) {
 
     const [ret,
-        setRet] = useState({status: "idle",run});
-
+        setRet] = useState(new AUseActionReturnType( "idle"));
 
     if (action === undefined) 
         throw new Error("action can not  be undefined in useService");
-    function run() {
+    function run(...otehrParams) {
         setRet({status: "running"});
-        action(...params).then(data => {
+        const pars = otehrParams
+            ? otehrParams
+            : params;
+        action(...pars).then(data => {
             handleChangeDone(data);
         }).catch(error => {
             handleChangeError(error)
         })
     }
-    function retry() {
-        
-        run();
+  
 
-    }
-    
     function handleChangeDone(data) {
-        setRet({status: "done", data,run});
+        setRet(new AUseActionReturnType("done",data,undefined,run));
     }
     function handleChangeError(error) {
-        setRet({status: "error", error, retry});
+        setRet(new  AUseActionReturnType("error",undefined,error,run));
     }
 
     useEffect(() => {
-
-        // const getData = async() => {
-        //     await action(...params);
-        // }
-
-        // const result = getData();
-        // result.then(d=>{
-        //     ha
-        // })
-        // console.log(120, result);
-
         return () => {
 
             setRet({status: "done"})
