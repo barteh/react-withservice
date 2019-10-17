@@ -11,16 +11,15 @@
  * Trademark barteh
  */
 import {useState, useEffect} from 'react';
-
 /**
   * @class
   * @classdesc return type of useAction
   *
   */
-class AUseActionReturnType {
+ class AUseActionReturnType {
     /**
      *
-     * @param {string} _status , can be "loading" | "error" | "ready"
+     * @param {string} _status , can be "idle" | "busy" | "error"
      * @param {any} _data an object or primitives return from servic
      * @param {number} _error contains http error codes like 404 or 500 ...
      * @param {function} _run a function can do run or retry geting data for Action
@@ -49,19 +48,23 @@ class AUseActionReturnType {
  * 1-{status, data, error, retry}=useService(...)
  * 2-[status, data, error, retry]=useService(...).toArray()
  */
-export function useAction(action, ...params) {
+ export function useAction(action, ...params) {
 
     const [ret,
-        setRet] = useState(new AUseActionReturnType( "idle"));
-
+        setRet] = useState(new AUseActionReturnType( "idle",undefined,undefined,run));
     if (action === undefined) 
         throw new Error("action can not  be undefined in useService");
     function run(...otehrParams) {
-        setRet({status: "running"});
-        const pars = otehrParams
+        if(ret.status!=="idle"){
+            handleChangeError(5000);
+            return;
+        }
+        setRet(new AUseActionReturnType( "busy",undefined,undefined,run));
+        const pars = otehrParams.length>0
             ? otehrParams
             : params;
-        action(...pars).then(data => {
+
+       return action(...pars).then(data => {
             handleChangeDone(data);
         }).catch(error => {
             handleChangeError(error)
@@ -70,7 +73,7 @@ export function useAction(action, ...params) {
   
 
     function handleChangeDone(data) {
-        setRet(new AUseActionReturnType("done",data,undefined,run));
+        setRet(new AUseActionReturnType("idle",data,undefined,run));
     }
     function handleChangeError(error) {
         setRet(new  AUseActionReturnType("error",undefined,error,run));
@@ -78,11 +81,10 @@ export function useAction(action, ...params) {
 
     useEffect(() => {
         return () => {
-
-            setRet({status: "done"})
+            setRet(new  AUseActionReturnType("idle",undefined,undefined,run))
         };
 
-    }, []);
+    }, [...params]);
 
     return ret;
 
