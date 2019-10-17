@@ -48,7 +48,7 @@ import {useState, useEffect} from 'react';
  * 1-{status, data, error, retry}=useService(...)
  * 2-[status, data, error, retry]=useService(...).toArray()
  */
- export function useAction(action, ...params) {
+ export default function useAction(action, ...params) {
 
     const [ret,
         setRet] = useState(new AUseActionReturnType( "idle",undefined,undefined,run));
