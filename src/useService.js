@@ -69,7 +69,7 @@ export default function useService(service, ...params) {
             errorsub;
 
         function handleChangeDone(data) {
-            setRet(new AUseServiceReturnType("ready", data));
+            setRet(new AUseServiceReturnType("ready", data,undefined,retry));
         }
         function handleChangeError(error) {
             setRet(new AUseServiceReturnType("error", undefined, error, retry));
