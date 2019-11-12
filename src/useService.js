@@ -58,7 +58,7 @@ export default function useService(service, ...params) {
     
     function retry() {
         setRet(new AUseServiceReturnType("loading"));
-        service.refresh(...params);
+       return service.refresh(...params);
     }
 
     const [ret,
