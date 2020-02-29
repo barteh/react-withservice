@@ -87,7 +87,6 @@ export default function useService(service, ...params) {
 
         getData();
         return (ee) => {
-            console.log(78, ee);
             setRet({status: "loading"})
             if (sub) 
                 sub.unsubscribe();
