@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run build && echo \"test passed\"",
-    "build": "npm run lint && babel src -d ./lib && babel index.d.ts -o index.js ",
+    "build": "npm run lint && babel src -d ./lib && babel index.ts -o index.js ",
     "up": "npm publish --access public --scope=barteh",
     "lint": "./node_modules/.bin/eslint src/**/*.js && echo \"eslint code is ok\"",
     "bt-update": "npm i @barteh/as-service@latest -S"

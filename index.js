@@ -26,6 +26,8 @@ Object.defineProperty(exports, "useAction", {
   }
 });
 
+var _asService = require("@barteh/as-service");
+
 var _withService = _interopRequireWildcard(require("./lib/with-service"));
 
 Object.keys(_withService).forEach(function (key) {

@@ -1,14 +1,9 @@
 import { AsService } from '@barteh/as-service';
 
-export  {default} from './lib/with-service';
-export  *  from './lib/with-service';
-export {default as useService} from "./lib/useService"
-export {default as useAction} from "./lib/useAction"
 
+export type TServiceStatus='error' | 'ready' | 'loading';
 
-declare type TServiceStatus='error' | 'ready' | 'loading';
+export function useService(service:AsService,...params:Array<any>):[TServiceStatus,any,any,(void=>void)];
 
-declare function useService(service:AsService,...params:Array<any>):[status:TServiceStatus,data:any,error:any,retry:(void=>void)];
-
-declare type TActionStatus='idle' | 'busy' | 'error';
-declare function useAction(service:AsService,...params:Array<any>):[status:TActionStatus,data:any,error:any,run:(any=>any)];
+export type TActionStatus='idle' | 'busy' | 'error';
+export function useAction(service:AsService,...params:Array<any>):[TActionStatus,any,any,(any=>any)];
